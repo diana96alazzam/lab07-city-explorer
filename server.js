@@ -23,13 +23,9 @@ app.get('/location', (request, response) => {
         response.status(200).json(locationData);
     }
     catch (error) {
-        console.errorHandler(error, request, response);
+        errorHandler(error, request, response);
     }
 });
-
-// Request URL: http://localhost:8000/location?city=london
-
-// search_query=london&formatted_query=Lynnwood%2C%20Snohomish%20County%2C%20Washington%2C%20USA&latitude=47.8278656&longitude=-122.3053932
 
 
 
@@ -37,20 +33,16 @@ app.get('/weather', (request, response) => {
 
     try {
         const darkskyData = require('./data/darksky.json');
-        // const reqCity = request.query.search_query;
-        // const reqFormat = response.query.formatted_query;
-        // const reqLat = request.query.latitude;
-        // const reqLon = request.query.longitude;
-        let weatherD = [];
-        for (let i = 0; i < 9; i++) {
-            const weatherData = new Weather(darkskyData.data[i]);
-            weatherD.push(weatherData);
-        }
-        response.status(200).json(weatherD);
+        
+        const weatherForecast = darkskyData.data.map((dayWeather) => {
+            return new Weather(dayWeather);
+        });
+
+        response.status(200).json(weatherForecast);
 
     }
     catch (error) {
-        console.errorHandler(error, request, response);
+        errorHandler(error, request, response);
     }
 });
 
@@ -63,34 +55,12 @@ function Location(city, geoData) {
     this.longitude = geoData[0].lon;
 }
 
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const weeknames = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
 
-function Weather(x,time) {
-    this.forecast = x.weather.description;
-
-    
-    let date1 = (x.datetime).split('-');
-    let day = weeknames[parseInt(date1[2]-4)];
-    let month = monthNames[parseInt(date1[1])-1];
-    let date2 = `${day} ${month} ${date1[2]} ${date1[0]}`;
-    this.time = date2;
-
-
+function Weather(dayWeather) {
+    this.forecast = dayWeather.weather.description;
+    this.time = new Date(dayWeather.datetime).toDateString();
 }
-
-
-//  2020-04-05 to Sun Apr 05 2020
-
-// Weather.prototype.timeFormat = function (x){
-//     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-//     let dateD = x.datetime;
-//     let date1 = dateD.split('-');
-
-//     let month = monthNames[parseInt(date1[1])];
-//     this.time = `${month} ${date1[2]} ${date1[0]}`;
-// }
 
 
 
