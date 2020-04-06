@@ -4,6 +4,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const superAgent = require('superagent');
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -15,53 +16,53 @@ app.get('/', (request, response) => {
 app.get('/bad', (request, response) => {
     throw new Error('Oh, ERROR!');
 });
+
+
 app.get('/location', (request, response) => {
-    try {
-        const geoData = require('./data/geo.json');
-        const city = request.query.city;
-        const locationData = new Location(city, geoData);
+
+    const city = request.query.city;
+    superAgent(`https://eu1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API_KEY}&q=${city}&format=json`)
+    
+    .then((locationRes)=> {
+        const locData = locationRes.body;
+        const locationData = new Location(city, locData);
         response.status(200).json(locationData);
-    }
-    catch (error) {
-        errorHandler(error, request, response);
-    }
+    })
+    
+    .catch ((error) => errorHandler(error, request, response));
+    
 });
 
 
 
 app.get('/weather', (request, response) => {
 
-    try {
-        const darkskyData = require('./data/darksky.json');
-        
-        const weatherForecast = darkskyData.data.map((dayWeather) => {
-            return new Weather(dayWeather);
-        });
+ superAgent(`https://api.weatherbit.io/v2.0/forecast/daily?city=${request.query.search_query}&key=${process.env.WEATHER_API_KEY}`)
 
-        response.status(200).json(weatherForecast);
+ .then((weatherRes)=> {
+     const weatherForecast = weatherRes.body.data.map((dayWeather) => {
+         return new Weather(dayWeather);
+     });
+     response.status(200).json(weatherForecast)
+ })
+ .catch((err)=> errorHandler(err, request, response));
 
-    }
-    catch (error) {
-        errorHandler(error, request, response);
-    }
 });
 
 app.use('*', notFoundHandler);
 
-function Location(city, geoData) {
+function Location(city, locData) {
     this.search_query = city;
-    this.formatted_query = geoData[0].display_name;
-    this.latitude = geoData[0].lat;
-    this.longitude = geoData[0].lon;
+    this.formatted_query = locData[0].display_name;
+    this.latitude = locData[0].lat;
+    this.longitude = locData[0].lon;
 }
-
 
 
 function Weather(dayWeather) {
     this.forecast = dayWeather.weather.description;
     this.time = new Date(dayWeather.datetime).toDateString();
 }
-
 
 
 function notFoundHandler(request, response) {
