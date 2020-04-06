@@ -43,11 +43,29 @@ app.get('/weather', (request, response) => {
      const weatherForecast = weatherRes.body.data.map((dayWeather) => {
          return new Weather(dayWeather);
      });
-     response.status(200).json(weatherForecast)
+     response.status(200).json(weatherForecast);
  })
  .catch((err)=> errorHandler(err, request, response));
 
 });
+
+
+
+app.get('/trails', (request, response) => {
+
+    superAgent(`https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=10&key=${process.env.HIKING_API_KEY}`)
+    
+    .then((trailsRes) => {   
+        console.log(trailsRes.body);
+        const trailsData = trailsRes.body.trails.map((trailD)=> {
+            return new Trail(trailD);
+        });
+        response.status(200).json(trailsData);
+    })
+    .catch((errT)=> errorHandler(errT, request, response));
+   
+   });
+
 
 app.use('*', notFoundHandler);
 
@@ -63,6 +81,30 @@ function Weather(dayWeather) {
     this.forecast = dayWeather.weather.description;
     this.time = new Date(dayWeather.datetime).toDateString();
 }
+
+
+function Trail(trailD) {
+    this.location = trailD.location ;
+    this.length = trailD.length ;
+    this.stars = trailD.stars ;
+    this.star_votes = trailD.starVotes ;
+    this.summary = trailD.summary ;
+    this.trail_url = trailD.url ;
+    this.conditions = trailD.conditionDetails ; //I need to format it
+    this.condition_date = trailD.conditionDate ; //I need to format it
+    this.condition_time = trailD.conditionDate ; //I need to format it
+}
+
+// "name": "Rattlesnake Ledge",
+//     "location": "Riverbend, Washington",
+//     "length": "4.3",
+//     "stars": "4.4",
+//     "star_votes": "84",
+//     "summary": "An extremely popular out-and-back hike to the viewpoint on Rattlesnake Ledge.",
+//     "trail_url": "https://www.hikingproject.com/trail/7021679/rattlesnake-ledge",
+//     "conditions": "Dry: The trail is clearly marked and well maintained.",
+//     "condition_date": "2018-07-21",
+//     "condition_time": "0:00:00 "
 
 
 function notFoundHandler(request, response) {
