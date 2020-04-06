@@ -84,16 +84,18 @@ function Weather(dayWeather) {
 
 
 function Trail(trailD) {
+    this.name = trailD.name;
     this.location = trailD.location ;
     this.length = trailD.length ;
     this.stars = trailD.stars ;
     this.star_votes = trailD.starVotes ;
     this.summary = trailD.summary ;
     this.trail_url = trailD.url ;
-    this.conditions = trailD.conditionDetails ; //I need to format it
-    this.condition_date = trailD.conditionDate ; //I need to format it
-    this.condition_time = trailD.conditionDate ; //I need to format it
+    this.conditions = trailD.conditionDetails ; 
+    this.condition_date = trailD.conditionDate.slice(0,11) ; 
+    this.condition_time = (trailD.conditionDate.slice(-8)) ; 
 }
+
 
 // "name": "Rattlesnake Ledge",
 //     "location": "Riverbend, Washington",
