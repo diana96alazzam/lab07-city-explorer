@@ -1,4 +1,4 @@
-# city_explorer_api
+# city_explorer_api-lab07
 
 **Author**: Diana Alazzam
 **Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
@@ -22,4 +22,4 @@
 -->
 
 
-Deployed URL: https://city-explorer-1.herokuapp.com/
+Deployed URL: https://city-explorer-lab07-d.herokuapp.com/
