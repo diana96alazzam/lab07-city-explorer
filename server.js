@@ -53,7 +53,7 @@ app.get('/weather', (request, response) => {
 
 app.get('/trails', (request, response) => {
 
-    superAgent(`https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=10&key=${process.env.HIKING_API_KEY}`)
+    superAgent(`https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=200&key=${process.env.HIKING_API_KEY}`)
     
     .then((trailsRes) => {   
         console.log(trailsRes.body);
