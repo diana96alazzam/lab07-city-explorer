@@ -53,7 +53,7 @@ app.get('/weather', (request, response) => {
 
 app.get('/trails', (request, response) => {
 
-    superAgent(`https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=10&key=${process.env.HIKING_API_KEY}`)
+    superAgent(`https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=200&key=${process.env.HIKING_API_KEY}`)
     
     .then((trailsRes) => {   
         console.log(trailsRes.body);
@@ -96,17 +96,6 @@ function Trail(trailD) {
     this.condition_time = (trailD.conditionDate.slice(-8)) ; 
 }
 
-
-// "name": "Rattlesnake Ledge",
-//     "location": "Riverbend, Washington",
-//     "length": "4.3",
-//     "stars": "4.4",
-//     "star_votes": "84",
-//     "summary": "An extremely popular out-and-back hike to the viewpoint on Rattlesnake Ledge.",
-//     "trail_url": "https://www.hikingproject.com/trail/7021679/rattlesnake-ledge",
-//     "conditions": "Dry: The trail is clearly marked and well maintained.",
-//     "condition_date": "2018-07-21",
-//     "condition_time": "0:00:00 "
 
 
 function notFoundHandler(request, response) {
